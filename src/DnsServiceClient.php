@@ -30,44 +30,48 @@ final class DnsServiceClient
         return $this->inner;
     }
 
-    public function createRecord(array $params, array $body): array
+    public function createRecord(array $params, CreateRecordRequest|array $body): RecordResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
             throw new InvalidPathError('zone_id');
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
-        $result = $this->inner->invoke(self::createRecordSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof CreateRecordRequest ? $body : CreateRecordRequest::fromArray($body);
+        $result = $this->inner->invoke(self::createRecordSpec(), $pathParams, $normalizedBody->toArray());
+        return RecordResponse::fromArray((array) $result->body);
     }
 
-    public function createZone(array $body): array
+    public function createZone(CreateZoneRequest|array $body): ZoneResponse
     {
         $pathParams = [];
-        $result = $this->inner->invoke(self::createZoneSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof CreateZoneRequest ? $body : CreateZoneRequest::fromArray($body);
+        $result = $this->inner->invoke(self::createZoneSpec(), $pathParams, $normalizedBody->toArray());
+        return ZoneResponse::fromArray((array) $result->body);
     }
 
-    public function deleteRecord(array $params, array $body): array
+    public function deleteRecord(array $params, DeleteRecordQuery|array $body): RecordResponse
     {
         $pathParams = [];
         if (!array_key_exists('record_id', $params)) {
             throw new InvalidPathError('record_id');
         }
         $pathParams['record_id'] = (string) $params['record_id'];
-        $result = $this->inner->invoke(self::deleteRecordSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof DeleteRecordQuery ? $body : DeleteRecordQuery::fromArray($body);
+        $result = $this->inner->invoke(self::deleteRecordSpec(), $pathParams, $normalizedBody->toArray());
+        return RecordResponse::fromArray((array) $result->body);
     }
 
-    public function deleteZone(array $params, array $body): array
+    public function deleteZone(array $params, DeleteZoneQuery|array $body): ZoneResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
             throw new InvalidPathError('zone_id');
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
-        $result = $this->inner->invoke(self::deleteZoneSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof DeleteZoneQuery ? $body : DeleteZoneQuery::fromArray($body);
+        $result = $this->inner->invoke(self::deleteZoneSpec(), $pathParams, $normalizedBody->toArray());
+        return ZoneResponse::fromArray((array) $result->body);
     }
 
     public function getHealth(): mixed
@@ -84,11 +88,11 @@ final class DnsServiceClient
         return $result->body;
     }
 
-    public function listRecords(): array
+    public function listRecords(): ListRecordsResponse
     {
         $pathParams = [];
         $result = $this->inner->invoke(self::listRecordsSpec(), $pathParams, null);
-        return $result->body;
+        return ListRecordsResponse::fromArray((array) $result->body);
     }
 
     public function paginateListRecords(): Paginator
@@ -97,7 +101,7 @@ final class DnsServiceClient
         return $this->inner->paginator(self::listRecordsSpec(), $pathParams);
     }
 
-    public function listZoneRecords(array $params): array
+    public function listZoneRecords(array $params): ListRecordsResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
@@ -105,7 +109,7 @@ final class DnsServiceClient
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
         $result = $this->inner->invoke(self::listZoneRecordsSpec(), $pathParams, null);
-        return $result->body;
+        return ListRecordsResponse::fromArray((array) $result->body);
     }
 
     public function paginateListZoneRecords(array $params): Paginator
@@ -118,11 +122,11 @@ final class DnsServiceClient
         return $this->inner->paginator(self::listZoneRecordsSpec(), $pathParams);
     }
 
-    public function listZones(): array
+    public function listZones(): ListZonesResponse
     {
         $pathParams = [];
         $result = $this->inner->invoke(self::listZonesSpec(), $pathParams, null);
-        return $result->body;
+        return ListZonesResponse::fromArray((array) $result->body);
     }
 
     public function paginateListZones(): Paginator
@@ -131,14 +135,14 @@ final class DnsServiceClient
         return $this->inner->paginator(self::listZonesSpec(), $pathParams);
     }
 
-    public function reloadRuntime(): array
+    public function reloadRuntime(): CommandResponse
     {
         $pathParams = [];
         $result = $this->inner->invoke(self::reloadRuntimeSpec(), $pathParams, null);
-        return $result->body;
+        return CommandResponse::fromArray((array) $result->body);
     }
 
-    public function reloadZone(array $params): array
+    public function reloadZone(array $params): CommandResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
@@ -146,17 +150,17 @@ final class DnsServiceClient
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
         $result = $this->inner->invoke(self::reloadZoneSpec(), $pathParams, null);
-        return $result->body;
+        return CommandResponse::fromArray((array) $result->body);
     }
 
-    public function scheduleRuntimeSync(): array
+    public function scheduleRuntimeSync(): CommandResponse
     {
         $pathParams = [];
         $result = $this->inner->invoke(self::scheduleRuntimeSyncSpec(), $pathParams, null);
-        return $result->body;
+        return CommandResponse::fromArray((array) $result->body);
     }
 
-    public function scheduleZoneSync(array $params): array
+    public function scheduleZoneSync(array $params): CommandResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
@@ -164,29 +168,31 @@ final class DnsServiceClient
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
         $result = $this->inner->invoke(self::scheduleZoneSyncSpec(), $pathParams, null);
-        return $result->body;
+        return CommandResponse::fromArray((array) $result->body);
     }
 
-    public function updateRecord(array $params, array $body): array
+    public function updateRecord(array $params, UpdateRecordRequest|array $body): RecordResponse
     {
         $pathParams = [];
         if (!array_key_exists('record_id', $params)) {
             throw new InvalidPathError('record_id');
         }
         $pathParams['record_id'] = (string) $params['record_id'];
-        $result = $this->inner->invoke(self::updateRecordSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof UpdateRecordRequest ? $body : UpdateRecordRequest::fromArray($body);
+        $result = $this->inner->invoke(self::updateRecordSpec(), $pathParams, $normalizedBody->toArray());
+        return RecordResponse::fromArray((array) $result->body);
     }
 
-    public function updateZone(array $params, array $body): array
+    public function updateZone(array $params, UpdateZoneRequest|array $body): ZoneResponse
     {
         $pathParams = [];
         if (!array_key_exists('zone_id', $params)) {
             throw new InvalidPathError('zone_id');
         }
         $pathParams['zone_id'] = (string) $params['zone_id'];
-        $result = $this->inner->invoke(self::updateZoneSpec(), $pathParams, $body);
-        return $result->body;
+        $normalizedBody = $body instanceof UpdateZoneRequest ? $body : UpdateZoneRequest::fromArray($body);
+        $result = $this->inner->invoke(self::updateZoneSpec(), $pathParams, $normalizedBody->toArray());
+        return ZoneResponse::fromArray((array) $result->body);
     }
 
     private static function createRecordSpec(): OperationSpec
